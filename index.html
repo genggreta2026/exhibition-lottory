@@ -43,7 +43,10 @@ h1{text-align:center;font-size:22px;margin-bottom:20px;color:#333}
     <div class="prize-item"><img src="./maozi.jpg"><p>帽子</p></div>
   </div>
 
-  <button class="draw-btn" onclick="startDraw()">开始抽奖</button>
+ <button class="draw-btn" onclick="startDraw()">开始抽奖</button>
+  
+ 
+  
   <div class="result" id="result"></div>
 </div>
 
@@ -53,11 +56,11 @@ h1{text-align:center;font-size:22px;margin-bottom:20px;color:#333}
 //  document.querySelector(".draw-btn").innerText = "您已抽过奖，每人仅限一次";
 //}
 
-//function startDraw() {
-//  if(localStorage.getItem("hasDraw")){
-//    alert("每人仅限抽奖一次！");
-    //return;
- // }
+function startDraw() {
+  if(localStorage.getItem("hasDraw")){
+    alert("每人仅限抽奖一次！");
+   // return;
+ }
 
   let name = document.getElementById("name").value.trim();
   let phone = document.getElementById("phone").value.trim();
