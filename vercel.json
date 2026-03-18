@@ -1,14 +1,9 @@
 {
   "version": 2,
-  "functions": {
-    "index.py": {
-      "runtime": "@vercel/python@3.11"
-    }
-  },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "index.py"
+      "source": "/save",
+      "destination": "/api/index.py"
     }
   ]
 }
