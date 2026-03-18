@@ -1,45 +1,37 @@
-from flask import Flask, request, send_file
-import requests
+import random
+from datetime import datetime
+from supabase import create_client, Client
 
-app = Flask(__name__)
+# 你的 Supabase 信息（已经帮你填好）
+SUPABASE_URL = "https://hvjtxwprbjkmkuonbtec.supabase.co"
+SUPABASE_KEY = "sb_publishable_nDCBFBG78Ali6LZrJUvglA_0SV5KSNq"
 
-# 你的谷歌脚本URL（已经填好）
-GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz1vudODw-kpPauY0SMeMnbpY3cASVn6elpyRO_FapKI5m44lS2k4GcTuORCU2RJarN/exec"
+# 连接数据库
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-@app.route('/')
-def index():
-    try:
-        return send_file('index.html')
-    except Exception as e:
-        return f"页面加载失败: {str(e)}", 500
+# 奖品设置
+PRIZES = ["一等奖", "二等奖", "三等奖", "谢谢参与"]
 
-@app.route('/api/log', methods=['POST'])
-def log_data():
-    try:
-        # 获取表单数据
-        name = request.form.get('name', '')
-        phone = request.form.get('phone', '')
-        email = request.form.get('email', '')
-        prize = request.form.get('prize', '')
-        
-        # 发送数据到谷歌表格
-        response = requests.post(
-            GOOGLE_SCRIPT_URL,
-            data={
-                'name': name,
-                'phone': phone,
-                'email': email,
-                'prize': prize
-            },
-            timeout=10
-        )
-        
-        # 返回成功响应
-        return "success"
-    except Exception as e:
-        # 出错也不影响抽奖，只打印日志
-        print(f"记录失败: {str(e)}")
-        return "success"
+def draw(user_name, user_phone):
+    # 检查手机号是否已经抽过
+    res = supabase.table("prize_records").select("*").eq("phone", user_phone).execute()
+    
+    if len(res.data) > 0:
+        return f"手机号 {user_phone} 已经抽过奖，不能重复抽！"
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    # 随机抽奖
+    result = random.choice(PRIZES)
+
+    # 写入数据库
+    supabase.table("prize_records").insert({
+        "name": user_name,
+        "phone": user_phone,
+        "award": result,
+        "create_time": datetime.now().isoformat()
+    }).execute()
+
+    return f"抽奖成功！姓名：{user_name}，奖品：{result}"
+
+# 测试一下（你可以删掉这行）
+if __name__ == "__main__":
+    print(draw("测试用户", "13800138000"))
