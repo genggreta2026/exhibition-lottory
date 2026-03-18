@@ -1,37 +1,41 @@
 import random
 from datetime import datetime
-from supabase import create_client, Client
+from supabase import create_client
 
-# 你的 Supabase 信息（已经帮你填好）
+# 你的信息
 SUPABASE_URL = "https://hvjtxwprbjkmkuonbtec.supabase.co"
 SUPABASE_KEY = "sb_publishable_nDCBFBG78Ali6LZrJUvglA_0SV5KSNq"
 
-# 连接数据库
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# 奖品设置
-PRIZES = ["一等奖", "二等奖", "三等奖", "谢谢参与"]
+def handler(request):
+    # 接收姓名、手机号
+    name = request.args.get("name", "")
+    phone = request.args.get("phone", "")
 
-def draw(user_name, user_phone):
-    # 检查手机号是否已经抽过
-    res = supabase.table("prize_records").select("*").eq("phone", user_phone).execute()
-    
-    if len(res.data) > 0:
-        return f"手机号 {user_phone} 已经抽过奖，不能重复抽！"
+    if not name or not phone:
+        return {"code": 400, "msg": "请输入姓名和手机号"}
 
-    # 随机抽奖
-    result = random.choice(PRIZES)
+    # 检查是否抽过
+    check = supabase.table("prize_records").select("*").eq("phone", phone).execute()
+    if check.data:
+        return {"code": 201, "msg": "该手机号已抽奖"}
+
+    # 抽奖
+    awards = ["一等奖", "二等奖", "三等奖", "谢谢参与"]
+    result = random.choice(awards)
 
     # 写入数据库
     supabase.table("prize_records").insert({
-        "name": user_name,
-        "phone": user_phone,
+        "name": name,
+        "phone": phone,
         "award": result,
         "create_time": datetime.now().isoformat()
     }).execute()
 
-    return f"抽奖成功！姓名：{user_name}，奖品：{result}"
-
-# 测试一下（你可以删掉这行）
-if __name__ == "__main__":
-    print(draw("测试用户", "13800138000"))
+    return {
+        "code": 200,
+        "msg": "抽奖成功",
+        "name": name,
+        "award": result
+    }
