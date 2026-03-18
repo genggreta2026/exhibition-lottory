@@ -5,7 +5,7 @@ import requests
 app = Flask(__name__)
 
 # ====================== 在这里填你的谷歌表格ID ======================
-GOOGLE_SHEET_ID = "把你表格ID粘贴在这里"
+GOOGLE_SHEET_ID = "https://docs.google.com/spreadsheets/d/1RwLOYYzNj3L46Q-6aC01WvcKaqfnNvL9CmHJZfjYKLI/edit?gid=0#gid=0"
 # ===================================================================
 
 @app.route('/')
