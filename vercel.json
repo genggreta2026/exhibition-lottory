@@ -1,9 +1,4 @@
 {
   "version": 2,
-  "rewrites": [
-    {
-      "source": "/save",
-      "destination": "/api/index.py"
-    }
-  ]
+
 }
