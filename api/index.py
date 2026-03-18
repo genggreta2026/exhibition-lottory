@@ -1,33 +1,35 @@
-from flask import Flask, request
-from supabase import create_client
-from datetime import datetime
+from flask import Flask, request, render_template_string
+import sqlite3
 
 app = Flask(__name__)
 
-# 你的数据库
-SUPABASE_URL = "https://hvjtxwprbjkmkuonbtec.supabase.co"
-SUPABASE_KEY = "sb_publishable_nDCBFBG78Ali6LZrJUvglA_0SV5KSNq"
+# 首页：Python 自己读 index.html 显示
+@app.route('/')
+def index():
+    with open("index.html", "r", encoding="utf-8") as f:
+        html_content = f.read()
+    return html_content
 
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+# 提交表单：写数据库
+@app.route('/submit', methods=['POST'])
+def submit():
+    try:
+        name = request.form.get('name')
+        phone = request.form.get('phone')
 
-# 你前端提交的地址：/api/log
-@app.route("/api/log", methods=["POST"])
-def log():
-    name = request.form.get("name")
-    phone = request.form.get("phone")
-    email = request.form.get("email")
-    prize = request.form.get("prize")
+        conn = sqlite3.connect('data.db')
+        c = conn.cursor()
+        c.execute('''
+        CREATE TABLE IF NOT EXISTS users
+        (name TEXT, phone TEXT)
+        ''')
+        c.execute("INSERT INTO users VALUES (?, ?)", (name, phone))
+        conn.commit()
+        conn.close()
 
-    # 直接存库，啥也不多干
-    supabase.table("prize_records").insert({
-        "name": name,
-        "phone": phone,
-        "email": email,
-        "award": prize,
-        "create_time": datetime.now().isoformat()
-    }).execute()
+        return "提交成功！"
+    except Exception as e:
+        return f"错误：{str(e)}"
 
-    return "ok"
-
-# Vercel 必须要这个
-application = app
+if __name__ == '__main__':
+    app.run()
