@@ -48,16 +48,16 @@ h1{text-align:center;font-size:22px;margin-bottom:20px;color:#333}
 </div>
 
 <script>
-if(localStorage.getItem("hasDraw")){
-  document.querySelector(".draw-btn").disabled = true;
-  document.querySelector(".draw-btn").innerText = "您已抽过奖，每人仅限一次";
-}
+//if(localStorage.getItem("hasDraw")){
+//  document.querySelector(".draw-btn").disabled = true;
+//  document.querySelector(".draw-btn").innerText = "您已抽过奖，每人仅限一次";
+//}
 
-function startDraw() {
-  if(localStorage.getItem("hasDraw")){
-    alert("每人仅限抽奖一次！");
+//function startDraw() {
+//  if(localStorage.getItem("hasDraw")){
+//    alert("每人仅限抽奖一次！");
     //return;
-  }
+ // }
 
   let name = document.getElementById("name").value.trim();
   let phone = document.getElementById("phone").value.trim();
@@ -82,9 +82,9 @@ function startDraw() {
   let winPrize = prizePool[Math.floor(Math.random() * prizePool.length)];
   document.getElementById("result").innerText = "恭喜您中奖：" + winPrize;
 
-  localStorage.setItem("hasDraw", "true");
-  document.querySelector(".draw-btn").disabled = true;
-  document.querySelector(".draw-btn").innerText = "已抽奖（每人一次）";
+//  localStorage.setItem("hasDraw", "true");
+//  document.querySelector(".draw-btn").disabled = true;
+//  document.querySelector(".draw-btn").innerText = "已抽奖（每人一次）";
 
    document.getElementById("prizeResult").value = winPrize;
 
