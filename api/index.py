@@ -1,41 +1,33 @@
-import random
-from datetime import datetime
+from flask import Flask, request
 from supabase import create_client
+from datetime import datetime
 
-# 你的信息
+app = Flask(__name__)
+
+# 你的数据库
 SUPABASE_URL = "https://hvjtxwprbjkmkuonbtec.supabase.co"
 SUPABASE_KEY = "sb_publishable_nDCBFBG78Ali6LZrJUvglA_0SV5KSNq"
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-def handler(request):
-    # 接收姓名、手机号
-    name = request.args.get("name", "")
-    phone = request.args.get("phone", "")
+# 你前端提交的地址：/api/log
+@app.route("/api/log", methods=["POST"])
+def log():
+    name = request.form.get("name")
+    phone = request.form.get("phone")
+    email = request.form.get("email")
+    prize = request.form.get("prize")
 
-    if not name or not phone:
-        return {"code": 400, "msg": "请输入姓名和手机号"}
-
-    # 检查是否抽过
-    check = supabase.table("prize_records").select("*").eq("phone", phone).execute()
-    if check.data:
-        return {"code": 201, "msg": "该手机号已抽奖"}
-
-    # 抽奖
-    awards = ["一等奖", "二等奖", "三等奖", "谢谢参与"]
-    result = random.choice(awards)
-
-    # 写入数据库
+    # 直接存库，啥也不多干
     supabase.table("prize_records").insert({
         "name": name,
         "phone": phone,
-        "award": result,
+        "email": email,
+        "award": prize,
         "create_time": datetime.now().isoformat()
     }).execute()
 
-    return {
-        "code": 200,
-        "msg": "抽奖成功",
-        "name": name,
-        "award": result
-    }
+    return "ok"
+
+# Vercel 必须要这个
+application = app
