@@ -24,11 +24,15 @@ h1{text-align:center;font-size:22px;margin-bottom:20px;color:#333}
 <div class="main">
   <h1>KAI展会幸运抽奖</h1>
 
+<form action="/api/log" method="POST">
   <div class="form-box">
-    <input type="text" id="name" placeholder="请输入姓名">
-    <input type="tel" id="phone" placeholder="请输入11位手机号">
-    <input type="email" id="email" placeholder="请输入邮箱">
+    <input type="text" id="name" name="name" placeholder="请输入姓名">
+    <input type="tel" id="phone" name="phone" placeholder="请输入11位手机号">
+    <input type="email" id="email" name="email" placeholder="请输入邮箱">
+    <!-- 隐藏域存储中奖结果，提交给log.js -->
+    <input type="hidden" id="prizeResult" name="prize" value="">
   </div>
+</form>
 
   <div class="prize-grid">
     <div class="prize-item"><img src="iphone.png"><p>iPhone（仅展示）</p></div>
@@ -82,22 +86,13 @@ function startDraw() {
   document.querySelector(".draw-btn").disabled = true;
   document.querySelector(".draw-btn").innerText = "已抽奖（每人一次）";
 
-  let now = new Date();
-  let time = now.getFullYear() + "-" +
-    String(now.getMonth()+1).padStart(2,'0') + "-" +
-    String(now.getDate()).padStart(2,'0') + " " +
-    String(now.getHours()).padStart(2,'0') + ":" +
-    String(now.getMinutes()).padStart(2,'0') + ":" +
-    String(now.getSeconds()).padStart(2,'0');
+   document.getElementById("prizeResult").value = winPrize;
 
-  let logLine = time + " | 姓名：" + name + " | 手机：" + phone + " | 邮箱：" + email + " | 奖品：" + winPrize + "\n";
-
-  // 写入日志
-  fetch("./log.txt", {
-    method: "POST",
-    headers: { "Content-Type": "text/plain" },
-    body: logLine
-  }).catch(() => { console.log(logLine); });
+fetch('/api/log', {
+  method: 'POST',
+  body: new FormData(document.forms[0])
+});
+  
 }
 </script>
 </body>
