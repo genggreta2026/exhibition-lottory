@@ -51,15 +51,17 @@ h1{text-align:center;font-size:22px;margin-bottom:20px;color:#333}
 </div>
 
 <script>
-//if(localStorage.getItem("hasDraw")){
-//  document.querySelector(".draw-btn").disabled = true;
-//  document.querySelector(".draw-btn").innerText = "您已抽过奖，每人仅限一次";
-//}
+  
+if(localStorage.getItem("hasDraw")){
+  document.querySelector(".draw-btn").disabled = true;
+  document.querySelector(".draw-btn").innerText = "您已抽过奖，每人仅限一次";
+}
 
 function startDraw() {
+  
   if(localStorage.getItem("hasDraw")){
     alert("每人仅限抽奖一次！");
-   // return;
+    return;
  }
 
   let name = document.getElementById("name").value.trim();
