@@ -1,5 +1,8 @@
 from flask import Flask, request, render_template_string
 import sqlite3
+import os
+
+print("当前路径：”, os.getcwd()) 
 
 app = Flask(__name__)
 
